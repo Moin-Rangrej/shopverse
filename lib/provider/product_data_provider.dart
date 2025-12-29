@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class CounterProvider extends ChangeNotifier {
+class ProductDataProvider extends ChangeNotifier {
   Dio dio = Dio();
   List productdata = <dynamic>[];
   bool isLoad = false;

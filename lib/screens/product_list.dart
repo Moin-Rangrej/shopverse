@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopverse/provider/counter_provider.dart';
+import 'package:shopverse/provider/product_data_provider.dart';
 import 'package:shopverse/widgets/productlist_card.dart';
 
 class ProductList extends StatefulWidget {
@@ -14,7 +14,7 @@ class _ProductListState extends State<ProductList> {
   bool isShowList = false;
   @override
   Widget build(BuildContext context) {
-    return Consumer<CounterProvider>(
+    return Consumer<ProductDataProvider>(
       builder: (context, productlist, child) {
         return Scaffold(
           appBar: AppBar(title: Text("Product List")),
