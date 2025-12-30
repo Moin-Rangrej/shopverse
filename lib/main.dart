@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopverse/provider/product_data_provider.dart';
-import 'package:shopverse/screens/product_list.dart';
+import 'package:shopverse/screens/productList/product_list.dart';
 
 void main() {
   runApp(
@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
+      
       home: const ProductList(),
     );
   }
