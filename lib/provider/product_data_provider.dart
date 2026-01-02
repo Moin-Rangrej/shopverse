@@ -9,6 +9,9 @@ class ProductDataProvider extends ChangeNotifier {
   Map<String, dynamic>? _singleProductData;
   Map<String, dynamic>? get singleProductData => _singleProductData;
 
+  List<dynamic> _saveCategoryList = [];
+  List<dynamic> get saveCategoryList => _saveCategoryList;
+
   bool isLoad = false;
   bool isShowList = false;
 
@@ -17,7 +20,7 @@ class ProductDataProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final product = await dio.get(ApiUrl.PRODUCT_LIST);
+      final product = await dio.get("${ApiUrl.PRODUCT_LIST}?limit=10&skip=10");
       productdata = product.data['products'];
     } catch (e) {
       debugPrint(e.toString());
@@ -97,6 +100,40 @@ class ProductDataProvider extends ChangeNotifier {
       print("delete product>> ${response.statusMessage}");
     } catch (e) {
       print("Delete product>>> ${e.toString()}");
+    }
+  }
+
+  Future<void> getCategoryList() async {
+    isLoad = true;
+    notifyListeners();
+    try {
+      Response response = await dio.get(
+        "${ApiUrl.PRODUCT_LIST}/${EndPoint.CATEGORYLIST}",
+      );
+      print("CategoryList statuscode>>>> ${response.statusCode}");
+      if (response.statusCode == 200) {
+        _saveCategoryList = response.data;
+      }
+      print("save Category>>> $saveCategoryList");
+      print("save Category length>>> ${saveCategoryList.length}");
+    } catch (e) {
+      print("CategoryLis>>> ${e.toString()}");
+    } finally {
+      isLoad = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> onPressCategoryProduct(String categoryname) async {
+    try {
+      Response response = await dio.get(
+        "${ApiUrl.PRODUCT_LIST}/${EndPoint.CATEGORY}/$categoryname",
+      );
+      print("response data>> ${response.data['products']}");
+      print("response data statuscode>> ${response.statusCode}");
+      print("response data message>> ${response.statusMessage}");
+    } catch (e) {
+      print(e);
     }
   }
 

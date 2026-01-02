@@ -3,8 +3,24 @@ import 'package:provider/provider.dart';
 import 'package:shopverse/provider/product_data_provider.dart';
 import 'package:shopverse/widgets/appbar/custom_appbar.dart';
 
-class SingleProductData extends StatelessWidget {
+class SingleProductData extends StatefulWidget {
   const SingleProductData({super.key});
+
+  @override
+  State<SingleProductData> createState() => _SingleProductDataState();
+}
+
+class _SingleProductDataState extends State<SingleProductData> {
+  int setScrollImage = 0;
+  final PageController _pageController = PageController();
+  final ValueNotifier<int> _currentPage = ValueNotifier<int>(0);
+
+  @override
+  void dispose() {
+    _currentPage.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,53 +51,56 @@ class SingleProductData extends StatelessWidget {
                   SizedBox(
                     height: 200,
                     child: PageView.builder(
+                      controller: _pageController,
+                      physics: const BouncingScrollPhysics(),
                       itemCount: product['images'].length,
+                      onPageChanged: (index) => _currentPage.value = index,
                       itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            Image.network(
-                              height: 150,
-                              width: 150,
-                              product['images'][index],
-                              fit: BoxFit
-                                  .contain, // Ensures the image fills the entire viewport
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value:
-                                            loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                            ),
-                            Text("${index + 1}"),
-                          ],
+                        return Center(
+                          child: Image.network(
+                            product['images'][index],
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.contain,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) return child;
+                              return const Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              );
+                            },
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.broken_image, size: 40),
+                          ),
                         );
                       },
                     ),
                   ),
-                  Row(
-                    children: product['images']
-                        .map<Widget>(
-                          (value) => Padding(
-                            padding: EdgeInsetsGeometry.all(5),
-                            child: Container(
-                              height: 10,
-                              width: 10,
-                              color: Colors.red,
+                  
+                  SizedBox(
+                    height: 20,
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: _currentPage,
+                      builder: (context, current, _) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            product['images'].length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              height: 8,
+                              width: current == index ? 16 : 8,
+                              decoration: BoxDecoration(
+                                color: current == index
+                                    ? Colors.yellowAccent
+                                    : Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                           ),
-                        )
-                        .toList(),
+                        );
+                      },
+                    ),
                   ),
                   Text(
                     product['title'],
@@ -99,7 +118,7 @@ class SingleProductData extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 12),
-
+                  
                   Text("Category: ${product['category']}"),
                   Text("Brand: ${product['brand']}"),
                   Text("Price: ₹${product['price']}"),

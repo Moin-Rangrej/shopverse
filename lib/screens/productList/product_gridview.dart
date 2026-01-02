@@ -20,11 +20,13 @@ class ProductGridview extends StatelessWidget {
         ),
         itemCount: productDataProvider.productdata.length,
         itemBuilder: (context, index) {
+          print("product index>>> $index");
           final item = productDataProvider.productdata[index];
           return GestureDetector(
             onTap: () =>
                 productDataProvider.onPressSingleProduct(context, item['id']),
             child: ProductlistCard(
+              index: index,
               thumbnail: item['thumbnail'],
               title: item['title'],
               // discription: item['description'],
